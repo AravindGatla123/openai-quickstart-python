@@ -1,79 +1,109 @@
-# OpenAI API Quickstart - Python
+# OpenRouter Quickstart for Python
 
-This repository hosts multiple quickstart apps for different OpenAI API endpoints (chat, assistants, etc). Check out the `examples` folder to try out different examples and get started using the OpenAI API.
+This repository contains a few small Python examples wired to work with OpenRouter through the OpenAI Python SDK. By default, the examples use `stepfun/step-3.5-flash:free`.
 
-## Basic request
+## Included examples
 
-To send your first API request with the [OpenAI Python SDK](https://github.com/openai/openai-python), make sure you have the right [dependencies installed](https://platform.openai.com/docs/quickstart?context=python) and then run the following code:
+- `examples/assistant-basic/assistant.py`: terminal chat loop
+- `examples/chat-basic/app.py`: Flask chat UI with streaming responses
+- `examples/assistant-flask/app.py`: Flask app using the Assistants API
+- `examples/assistant-functions/functions.py`: function-calling example
+
+## Basic API request
 
 ```python
 from openai import OpenAI
-client = OpenAI()
 
-completion = client.chat.completions.create(
-  model="gpt-3.5-turbo",
-  messages=[
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "Hello!"}
-  ]
+client = OpenAI(
+    api_key="your_openrouter_api_key",
+    base_url="https://openrouter.ai/api/v1",
 )
 
-print(completion.choices[0].message)
+completion = client.chat.completions.create(
+    model="stepfun/step-3.5-flash:free",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Hello!"},
+    ],
+)
+
+print(completion.choices[0].message.content)
 ```
 
 ## Setup
 
-1. If you don’t have Python installed, install it [from Python.org](https://www.python.org/downloads/).
-
-2. [Clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) this repository.
-
-3. Navigate into the project directory:
-
-   ```bash
-   $ cd openai-quickstart-python
-   ```
-
-4. Create a new virtual environment:
-
-   - macOS:
-
-     ```bash
-     $ python -m venv venv
-     $ . venv/bin/activate
-     ```
-
-   - Windows:
-     ```cmd
-     > python -m venv venv
-     > .\venv\Scripts\activate
-     ```
-
-5. Install the requirements:
-
-   ```bash
-   $ pip install -r requirements.txt
-   ```
-
-6. Make a copy of the example environment variables file:
-
-   ```bash
-   $ cp .env.example .env
-   ```
-
-7. Add your [API key](https://platform.openai.com/api-keys) to the newly created `.env` file.
-
-8. Run the app:
-
-This step depends on the app itself. If the code uses flask (like the chat-basic example), you can run:
+1. Install Python 3 if it is not already available.
+2. Clone this repository and move into it:
 
 ```bash
-$ flask run
+cd openai-quickstart-python
 ```
 
-You should now be able to access the app from your browser at the following URL: [http://localhost:5000](http://localhost:5000)!
+3. Create and activate a virtual environment.
 
-If the code is just a simple Python script, you can run it with:
+macOS and Linux:
 
 ```bash
-$ python my_file.py
+python3 -m venv venv
+source venv/bin/activate
 ```
+
+Windows:
+
+```cmd
+python -m venv venv
+.\venv\Scripts\activate
+```
+
+4. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+5. Create your local environment file:
+
+```bash
+cp .env.example .env
+```
+
+6. Set your OpenRouter credentials in `.env`:
+
+```env
+OPENAI_API_KEY=your_openrouter_api_key
+OPENAI_BASE_URL=https://openrouter.ai/api/v1
+OPENAI_MODEL=stepfun/step-3.5-flash:free
+```
+
+## Run an example
+
+### Terminal assistant
+
+```bash
+python3 examples/assistant-basic/assistant.py
+```
+
+Type `exit` to stop the session.
+
+### Basic Flask chat app
+
+```bash
+cd examples/chat-basic
+flask --app app run
+```
+
+Open `http://127.0.0.1:5000`.
+
+### Flask Assistants app
+
+```bash
+cd examples/assistant-flask
+flask --app app run
+```
+
+Open `http://127.0.0.1:5000`.
+
+## Notes
+
+- The Flask examples read environment variables from your shell, so make sure your virtual environment is active and your `.env` values are available before starting them.
+- `examples/assistant-flask` uses the Assistants API, while `examples/chat-basic` uses chat completions with streaming.

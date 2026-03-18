@@ -1,3 +1,5 @@
+import os
+
 from flask import (
     Flask,
     render_template,
@@ -8,7 +10,11 @@ from flask import (
 )
 import openai
 
-client = openai.OpenAI()
+client = openai.OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url=os.getenv("OPENAI_BASE_URL"),
+)
+model = os.getenv("OPENAI_MODEL", "stepfun/step-3.5-flash:free")
 
 app = Flask(__name__)
 
@@ -35,7 +41,7 @@ def stream():
         assistant_response_content = ""
 
         with client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=model,
             messages=chat_history,
             stream=True,
         ) as stream:
